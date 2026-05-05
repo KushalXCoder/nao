@@ -23,7 +23,9 @@ import { telegramRoutes } from './routes/telegram';
 import { testRoutes } from './routes/test';
 import { whatsappRoutes } from './routes/whatsapp';
 import { logLicenseStatus } from './services/license-startup';
+import { pingLicensesServer } from './services/ping';
 import { posthog, PostHogEvent } from './services/posthog';
+import { slackService } from './services/slack';
 import { TrpcRouter, trpcRouter } from './trpc/router';
 import { createContext } from './trpc/trpc';
 import { BudgetExceededError, HandlerError } from './utils/error';
@@ -231,6 +233,9 @@ export const startServer = async (opts: { port: number; host: string }) => {
 
 	const address = await app.listen({ host: opts.host, port: opts.port });
 	app.log.info(`Server is running on ${address}`);
+
+	void pingLicensesServer();
+	void slackService.startSocketModeForAllProjects();
 
 	posthog.capture(undefined, PostHogEvent.ServerStarted, { ...opts, address });
 
