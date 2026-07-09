@@ -112,7 +112,7 @@ function buildResolved(props: BuildChartProps) {
 				continue;
 			}
 			const val = item[s.data_key];
-			if (typeof val === 'string') {
+			if (typeof val === 'string' && val.trim().length > 0) {
 				const num = Number(val);
 				if (!isNaN(num)) {
 					newItem[s.data_key] = num;
